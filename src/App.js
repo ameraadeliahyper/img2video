@@ -9,6 +9,7 @@ function App() {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [videoUrl, setVideoUrl] = useState('');
 
+
   const handleFormSubmit = async ({ image, prompt, duration, aspectRatio, negativePrompt }) => {
     setStatus('processing');
     const formData = new FormData();
@@ -22,7 +23,6 @@ function App() {
     const response = await fetch(process.env.REACT_APP_API_URL, {
       method: 'POST',
       body: formData,
-      mode: 'no-cors', // This will limit the response
     });
   
     if (response.ok) {
