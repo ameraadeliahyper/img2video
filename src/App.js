@@ -24,7 +24,7 @@ function App() {
     //   method: 'POST',
     //   body: formData,
     // });
-    const response = await fetch('https://img2video.kingai.online/api/generate-video', {
+    const response = await fetch('https://api.kingai.online/api/generate-video', {
       method: 'POST',
       body: formData,
     });
