@@ -1,23 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useState } from 'react';
+import Form from './components/Form';
+import Processing from './components/Processing';
+import Result from './components/Result';
 
 function App() {
+  const [status, setStatus] = useState('idle'); // 'idle', 'processing', 'done'
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [videoUrl, setVideoUrl] = useState('');
+
+  const handleFormSubmit = async ({ image, prompt, duration, aspectRatio, negativePrompt }) => {
+    setStatus('processing');
+    const formData = new FormData();
+    formData.append('image', image);
+    formData.append('prompt', prompt);
+    formData.append('duration', duration);
+    formData.append('aspectRatio', aspectRatio);
+    formData.append('negativePrompt', negativePrompt);
+
+    const startTime = Date.now();
+    const response = await fetch('https://img2video.kingai.online/api/generate-video', {
+      method: 'POST',
+      body: formData,
+    });
+  
+    if (response.ok) {
+      const data = await response.json();
+      const endTime = Date.now();
+      setElapsedTime((endTime - startTime) / 1000);
+      setVideoUrl(data.videoUrl);
+      setStatus('done');
+    } else {
+      console.error('Error generating video');
+      setStatus('idle');
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="min-h-screen bg-[#202021] flex items-center justify-center">
+      <div className="max-w-3xl w-full p-6">
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-300 ">Image to Video PRO</h2>
+        {status === 'idle' && <Form onSubmit={handleFormSubmit} />}
+        {status === 'processing' && <Processing elapsedTime={elapsedTime} />}
+        {status === 'done' && <Result videoUrl={videoUrl} />}
+    
+      </div>
     </div>
   );
 }
