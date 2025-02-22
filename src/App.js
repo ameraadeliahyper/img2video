@@ -20,7 +20,11 @@ function App() {
     formData.append('negativePrompt', negativePrompt);
 
     const startTime = Date.now();
-    const response = await fetch(process.env.REACT_APP_API_URL, {
+    // const response = await fetch(process.env.REACT_APP_API_URL, {
+    //   method: 'POST',
+    //   body: formData,
+    // });
+    const response = await fetch('https://img2video.kingai.online/api/generate-video', {
       method: 'POST',
       body: formData,
     });

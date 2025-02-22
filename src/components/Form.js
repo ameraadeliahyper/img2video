@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Lottie from 'lottie-react';
 import uploadAnimation from './upload.json'; // Ganti dengan jalur yang benar
-import Processing from './Processing'; // Pastikan jalur ini benar
-
+// import Processing from './Processing'; // Pastikan jalur ini benar
 const Form = ({ onSubmit }) => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -10,9 +9,13 @@ const Form = ({ onSubmit }) => {
   const [duration, setDuration] = useState(5);
   const [aspectRatio, setAspectRatio] = useState('16:9');
   const [negativePrompt, setNegativePrompt] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false); // State untuk memantau proses
   const fileInputRef = useRef(null);
-
+  
+  
+  // const handleCancel = () => {
+  //   // Logika untuk kembali ke form atau reset state
+  //   // Misalnya, mengatur state untuk menampilkan form lagi
+  // };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -27,61 +30,51 @@ const Form = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsProcessing(true); // Set proses menjadi true
+    // Validasi: Pastikan ada gambar yang diunggah
+    if (!image) {
+      alert("Please upload a photo before generating.");
+      return;
+    }
     onSubmit({ image, prompt, duration, aspectRatio, negativePrompt });
   };
 
-  const handleClick = () => {
-    fileInputRef.current.click();
-  };
+  // const handleClick = () => {
+  //   fileInputRef.current.click();
+  // };
 
-  const handleCancel = () => {
-    setIsProcessing(false); // Reset proses
-    setImage(null);
-    setImagePreview(null);
-    setPrompt('');
-    setDuration(5);
-    setAspectRatio('16:9');
-    setNegativePrompt('');
-  };
-
+  
   return (
-    <div>
-      {isProcessing ? (
-        <Processing imagePreview={imagePreview} onCancel={handleCancel} />
-      ) : (
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-[#151515] rounded-xl">
-          <div className="mb-4">
-            <label className="block text-gray-300 text-xs font-light mb-2" htmlFor="image">
-              Upload Media
-            </label>
-            <div
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-300 bg-[#202021] leading-tight focus:outline-none focus:shadow-outline cursor-pointer"
-              style={{
-                minHeight: imagePreview ? '700px' : '200px',
-                backgroundImage: imagePreview ? `url(${imagePreview})` : 'none',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                border: imagePreview ? 'none' : '1px solid #4f4848',
-              }}
-              onClick={handleClick}
-            >
-              {imagePreview ? null : (
-                <div className="flex flex-col items-center justify-center h-full pt-15">
-                  <p className="-mb-5 mt-5 text-gray-400 text-xs font-bold">Click/Drop to Upload</p>
-                  <Lottie animationData={uploadAnimation} loop={true} style={{ width: 200, height: 200 }} />
-                  <p className="-mt-20 text-gray-400 text-xs">JPG / PNG files up to 10MB</p>
-                </div>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                style={{ display: 'none' }}
-              />
-            </div>
-          
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 bg-[#151515] rounded-xl  ">
+      <div className="mb-4">
+  <label className="block text-gray-300 text-xs font-light mb-2" htmlFor="image">
+    Upload Media
+  </label>
+  <div
+    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-300 bg-[#202021]  leading-tight focus:outline-none focus:shadow-outline cursor-pointer"
+    style={{
+      minHeight: imagePreview ? '700px' : '200px', // Minimum height saat belum ada gambar
+      backgroundImage: imagePreview ? `url(${imagePreview})` : 'none',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      border: imagePreview ? 'none' : '1px solid #4f4848', // Border hanya saat belum ada gambar
+    }}
+    onClick={() => fileInputRef.current.click()} // Memungkinkan klik untuk memilih file
+  >
+    {imagePreview ? null : (
+          <div className="flex flex-col items-center justify-center h-full pt-15"> 
+          <p className="-mb-5 mt-5 text-gray-400 text-xs font-bold">Click/Drop to Upload</p> 
+            <Lottie animationData={uploadAnimation} loop={true} style={{ width: 200, height: 200 }} />
+            <p className="-mt-20 text-gray-400 text-xs">JPG / PNG files up to 10MB</p>
+          </div>
+        )}
+    <input
+      ref={fileInputRef}
+      type="file"
+      accept="image/*"
+      onChange={handleImageChange}
+      style={{ display: 'none' }} // Sembunyikan input file
+    />
+  </div>
 </div>
       <div className="mb-4">
         <label className="block text-gray-300 text-xs font-light mb-2" htmlFor="prompt">
@@ -151,13 +144,12 @@ const Form = ({ onSubmit }) => {
       <div className="flex justify-center mb-4"> {/* Tambahkan kelas flex dan justify-center */}
   <button
     className="bg-stone-800 hover:bg-stone-950 text-white text-sm font-bold py-3 px-5 rounded focus:outline-none focus:shadow-outline"
-    type="submit">
+    type="submit"
+  >
     Generate
   </button>
 </div>
     </form>
-      )}
-      </div>
   );
 };
 
