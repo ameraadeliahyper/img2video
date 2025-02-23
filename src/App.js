@@ -24,10 +24,6 @@ function App() {
       method: 'POST',
       body: formData,
     });
-    // const response = await fetch('https://api.kingai.online/gen', {
-    //   method: 'POST',
-    //   body: formData,
-    // });
   
     if (response.ok) {
       const data = await response.json();
